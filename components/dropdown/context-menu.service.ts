@@ -28,7 +28,7 @@ export class NzContextMenuService {
 
   constructor(private ngZone: NgZone, private overlay: Overlay) {}
 
-  create($event: MouseEvent | { x: number; y: number }, nzDropdownMenuComponent: NzDropdownMenuComponent): void {
+  create($event: MouseEvent | { x: number; y: number }, nzDropdownMenuComponent: NzDropdownMenuComponent, clickHide=false): void {
     this.close(true);
     const { x, y } = $event;
     if ($event instanceof MouseEvent) {
@@ -47,7 +47,7 @@ export class NzContextMenuService {
 
     this.closeSubscription = new Subscription();
 
-    this.closeSubscription.add(nzDropdownMenuComponent.descendantMenuItemClick$.subscribe(() => this.close()));
+    this.closeSubscription.add(nzDropdownMenuComponent.descendantMenuItemClick$.pipe(filter(() => !clickHide)).subscribe(() => this.close()));
 
     this.closeSubscription.add(
       this.ngZone.runOutsideAngular(() =>
